@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <type_traits>
 #include <utility>
@@ -61,7 +62,7 @@ public:
     constexpr static std::size_t find() noexcept
     {
         constexpr bool ret = cmp<Type, Pos>();
-        
+
         if constexpr (ret)
             return Pos;
 
@@ -94,7 +95,7 @@ public:
     constexpr static void for_each(Args&&... args)
     {
         if constexpr (Pos < length)
-            Func<at<Pos>> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<Pos>>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);
@@ -105,7 +106,7 @@ public:
     constexpr static void for_each(Args&&... args)
     {
         if constexpr (Pos < length)
-            Func<at<Pos>, Pos> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<Pos>, Pos>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);

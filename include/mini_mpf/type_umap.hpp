@@ -1,8 +1,10 @@
 #pragma once
 #include "mini_mpf/type_array.hpp"
 #include <cstddef>
+#include <functional>
 #include <optional>
 #include <type_traits>
+#include <utility>
 
 namespace mini_mpf {
 
@@ -87,8 +89,10 @@ public:
     template <template <typename> typename Func, std::size_t Pos = 0, typename... Args>
     constexpr static void for_each(Args&&... args)
     {
+        constexpr Enum key = static_cast<Enum>(Pos);
+
         if constexpr (Pos < length)
-            Func<at<static_cast<Enum>(Pos)>> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<key>>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);
@@ -101,7 +105,7 @@ public:
         constexpr Enum key = static_cast<Enum>(Pos);
 
         if constexpr (Pos < length)
-            Func<at<key>, key> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<key>, key>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);
@@ -190,8 +194,10 @@ public:
     template <template <typename> typename Func, std::size_t Pos = 0, typename... Args>
     constexpr static void for_each(Args&&... args)
     {
+        constexpr Enum key = static_cast<Enum>(Pos);
+
         if constexpr (Pos < length)
-            Func<at<static_cast<Enum>(Pos)>> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<key>>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);
@@ -204,7 +210,7 @@ public:
         constexpr Enum key = static_cast<Enum>(Pos);
 
         if constexpr (Pos < length)
-            Func<at<key>, key> {}.operator()(std::forward<Args>(args)...);
+            std::invoke(Func<at<key>, key>(), std::forward<Args>(args)...);
 
         if constexpr (Pos + 1 < length)
             for_each<Func, Pos + 1>(std::forward<Args>(args)...);
